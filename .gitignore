@@ -1,0 +1,5 @@
+*.passphrase
+*.private
+*.key
+build/
+localhost*.digest

@@ -1,0 +1,27 @@
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        required: true
+        type: string
+permissions:
+  packages: write
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+    - uses: redhat-actions/podman-login@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - env:
+        SIGSTORE_PRIVATE: ${{ secrets.SIGSTORE_PRIVATE }}
+        SECURE_BOOT_KEY: ${{ secrets.SECURE_BOOT_KEY }}
+        BASE_IMAGE: ${{ inputs.image }}
+      run: |
+        set -euxo pipefail
+        ./setup.sh
+        ./build.sh

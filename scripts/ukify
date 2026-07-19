@@ -1,0 +1,17 @@
+#!/usr/bin/bash
+set -euxo pipefail
+mkdir /out
+
+DIGEST=$(bootc container compute-composefs-digest /target)
+
+KVER=$(ls /target/usr/lib/modules)
+
+ukify build \
+  --linux "/target/usr/lib/modules/${KVER}/vmlinuz" \
+  --initrd "/target/usr/lib/modules/${KVER}/initramfs.img" \
+  --cmdline "rw composefs=${DIGEST} ${KARGS}" \
+  --os-release "@/target/usr/lib/os-release" \
+  --signtool sbsign \
+  --secureboot-private-key /run/secrets/secureboot.key \
+  --secureboot-certificate /run/secrets/secureboot.pem \
+  --output "/out/${KVER}.efi"

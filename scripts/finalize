@@ -1,0 +1,13 @@
+#!/usr/bin/bash
+set -euxo pipefail
+kver=$(ls /usr/lib/modules)
+dracut -vf "/usr/lib/modules/${kver}/initramfs.img" "$kver"
+
+rm -f /etc/httpd/logs
+rm -f /etc/httpd/state
+
+rm -rf /var
+mkdir -p /var/tmp
+
+rm -rf /ostree
+rm -rf /sysroot/ostree

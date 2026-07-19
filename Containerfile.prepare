@@ -1,0 +1,17 @@
+ARG BASE_IMAGE
+FROM $BASE_IMAGE as base
+COPY files /
+RUN \
+    --mount=type=tmpfs,target=/run \
+    --mount=type=tmpfs,target=/tmp \
+    --mount=type=bind,source=scripts,target=/scripts \
+/scripts/finalize
+
+FROM base
+ARG CONFIG_FILE
+COPY $CONFIG_FILE /config.json
+RUN \
+    --mount=type=tmpfs,target=/run --mount=type=tmpfs,target=/tmp \
+    --mount=type=bind,from=base,target=/target \
+    --mount=type=bind,source=scripts,target=/scripts \
+/scripts/chunkah

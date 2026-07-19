@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+
+chunkah build \
+  --rootfs /target \
+  --max-layers 256 \
+  --config /config.json \
+  --output oci:/out
