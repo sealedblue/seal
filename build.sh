@@ -27,6 +27,19 @@ podman build \
     --secret=id=secureboot.key,src=${SIGSTORE_PREFIX}-db.key \
     --secret=id=secureboot.pem,src=${SIGSTORE_PREFIX}-db.pem \
     -t "${SEALED_IMAGE}" .
+
+for i in {9..0..-1}; do
+    NEXT="-$(($i+1))"
+    THIS="-$i"
+    [ $i -gt 0 ] || THIS=""
+    skopeo copy --sign-by-sigstore-private-key ${SIGSTORE_PREFIX}-staged.private \
+        --sign-passphrase-file ${SIGSTORE_PREFIX}-staged.passphrase \
+        "docker://${SEALED_IMAGE}${THIS}" "docker://${SEALED_IMAGE}${NEXT}" || true
+    skopeo copy --sign-by-sigstore-private-key ${SIGSTORE_PREFIX}.private \
+        --sign-passphrase-file ${SIGSTORE_PREFIX}.passphrase \
+        "docker://${SEALED_IMAGE}${NEXT}" "docker://${IMAGE}${NEXT}" || true
+done
+
 DIGEST_NAME=$(systemd-escape "$IMAGE")
 podman push --sign-by-sigstore-private-key ${SIGSTORE_PREFIX}-staged.private \
     --sign-passphrase-file ${SIGSTORE_PREFIX}-staged.passphrase \
