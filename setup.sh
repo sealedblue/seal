@@ -22,7 +22,7 @@ jq >"${CONFIG}/containers/policy.json" <<EOC
             "${IMAGE_PREFIX}": [
                 {
                     "type": "sigstoreSigned",
-                    "keyPath": "$(realpath keys/sealedblue-staged.pub)",
+                    "keyPath": "$(realpath ${SIGSTORE_PREFIX}-staged.pub)",
                     "signedIdentity": {
                         "type": "matchRepository"
                     }
@@ -38,6 +38,8 @@ git config --global user.name "github-actions[bot]"
 git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
 umask 0077
-<<<"${SIGSTORE_PRIVATE}" cat >"${SIGSTORE_PREFIX}.private"
+<<<"${SIGSTORE_PRIVATE}" cat >"${SIGSTORE_PREFIX}-staged.private"
+<<<"" cat >"${SIGSTORE_PREFIX}-staged.passphrase"
+<<<"${SEAL_SIGSTORE_PRIVATE}" cat >"${SIGSTORE_PREFIX}.private"
 <<<"" cat >"${SIGSTORE_PREFIX}.passphrase"
 <<<"${SECURE_BOOT_KEY}" cat >"${SIGSTORE_PREFIX}-db.key"

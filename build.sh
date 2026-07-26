@@ -19,18 +19,22 @@ podman run --rm \
     -v ./build:/build \
     "${PREPARED_IMAGE}" \
     cp -a /out /build/.
+SEALED_IMAGE="${IMAGE}-sealed"
 podman build \
     --security-opt label=disable \
     --build-arg BASE_IMAGE="oci:build/out" \
     --build-arg KARGS="quiet rhgb" \
-    --secret=id=secureboot.key,src=keys/sealedblue-db.key \
-    --secret=id=secureboot.pem,src=keys/sealedblue-db.pem \
-    -t "$IMAGE" .
+    --secret=id=secureboot.key,src=${SIGSTORE_PREFIX}-db.key \
+    --secret=id=secureboot.pem,src=${SIGSTORE_PREFIX}-db.pem \
+    -t "${SEALED_IMAGE}" .
 DIGEST_NAME=$(systemd-escape "$IMAGE")
-podman push --sign-by-sigstore-private-key keys/sealedblue.private \
-    --sign-passphrase-file keys/sealedblue.passphrase \
+podman push --sign-by-sigstore-private-key ${SIGSTORE_PREFIX}-staged.private \
+    --sign-passphrase-file ${SIGSTORE_PREFIX}-staged.passphrase \
     --digestfile "${DIGEST_NAME}.digest" \
-    "${IMAGE}"
+    "${SEALED_IMAGE}"
+skopeo copy --sign-by-sigstore-private-key ${SIGSTORE_PREFIX}.private \
+    --sign-passphrase-file ${SIGSTORE_PREFIX}.passphrase \
+    "docker://${SEALED_IMAGE}" "docker://$IMAGE"
 
 BASE_DIGEST_NAME=$(systemd-escape "$BASE_IMAGE")
 mkdir -p input
