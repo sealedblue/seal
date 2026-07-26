@@ -17,6 +17,7 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
     - env:
         SIGSTORE_PRIVATE: ${{ secrets.SIGSTORE_PRIVATE }}
+        SEAL_SIGSTORE_PRIVATE: ${{ secrets.SEAL_SIGSTORE_PRIVATE }}
         SECURE_BOOT_KEY: ${{ secrets.SECURE_BOOT_KEY }}
       run: |
         set -euxo pipefail
