@@ -24,7 +24,6 @@ SEALED_IMAGE="${IMAGE}-sealed"
 podman build \
     --security-opt label=disable \
     --build-arg BASE_IMAGE="oci:build/out" \
-    --build-arg KARGS="quiet rhgb" \
     --secret=id=secureboot.key,src=${SIGSTORE_PREFIX}-db.key \
     --secret=id=secureboot.pem,src=${SIGSTORE_PREFIX}-db.pem \
     -t "${SEALED_IMAGE}" .
