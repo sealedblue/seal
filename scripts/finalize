@@ -9,7 +9,9 @@ sbsign \
 kver=$(ls /usr/lib/modules)
 
 mkdir -p /run/akmods
-! type akmods || akmods --kernels "$kver" --rebuild --verbose
+! type akmods || akmods --kernels "$kver" --rebuild
+RPMS=$(echo /var/cache/akmods/nvidia/*.rpm)
+[ -z "$RPMS" ] || dnf -y install --nogpgcheck --disablerepo='*' $RPMS
 
 dracut -vf "/usr/lib/modules/${kver}/initramfs.img" "$kver"
 
