@@ -9,6 +9,7 @@ mkdir -p build
 podman inspect "$BASE_IMAGE" > build/config.json
 PREPARED_IMAGE="${IMAGE}-prepared"
 podman build \
+    $BUILD_ARGS \
     --security-opt label=disable \
     --build-arg BASE_IMAGE="$BASE_IMAGE" \
     --build-arg CONFIG_FILE="build/config.json" \
