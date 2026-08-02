@@ -1,6 +1,16 @@
 #!/usr/bin/bash
 set -euxo pipefail
+
+sbsign \
+  --key /etc/pki/akmods/private/private_key.priv \
+  --cert /etc/pki/akmods/certs/public_key.der \
+  /usr/lib/systemd/boot/efi/systemd-bootx64.efi
+
 kver=$(ls /usr/lib/modules)
+
+mkdir -p /run/akmods
+! type akmods || akmods --kernels "$kver" --rebuild --verbose
+
 dracut -vf "/usr/lib/modules/${kver}/initramfs.img" "$kver"
 
 rm -f /etc/httpd/logs

@@ -13,6 +13,8 @@ podman build \
     --security-opt label=disable \
     --build-arg BASE_IMAGE="$BASE_IMAGE" \
     --build-arg CONFIG_FILE="build/config.json" \
+    --secret=id=secureboot.key,src=${SIGSTORE_PREFIX}-db.key \
+    --secret=id=secureboot.pem,src=${SIGSTORE_PREFIX}-db.pem \
     -f Containerfile.prepare \
     -t "${PREPARED_IMAGE}" .
 podman run --rm \

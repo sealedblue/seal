@@ -5,6 +5,8 @@ RUN \
     --mount=type=tmpfs,target=/run \
     --mount=type=tmpfs,target=/tmp \
     --mount=type=bind,source=scripts,target=/scripts \
+    --mount=type=secret,id=secureboot.key,mode=0444,target=/etc/pki/akmods/private/private_key.priv \
+    --mount=type=secret,id=secureboot.pem,mode=0444,target=/etc/pki/akmods/certs/public_key.der \
 /scripts/finalize
 
 FROM base
